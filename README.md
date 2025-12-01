@@ -1,4 +1,4 @@
-# Cache-Me-If-You-Can
+# Elastic RAG
 
 A high-performance **Retrieval-Augmented Generation (RAG)** system with microservices architecture, Redis-based message queuing, and built-in monitoring using Prometheus and load testing with Locust.
 
