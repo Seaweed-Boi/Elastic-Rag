@@ -275,8 +275,6 @@ curl http://localhost:9090/api/v1/targets | jq
 
 ## 📈 Performance Benchmarks
 
-Tested on MacBook Air M2 (8GB RAM):
-
 | Metric | Value |
 |--------|-------|
 | Throughput | 4-5 req/s |
@@ -315,4 +313,4 @@ This project is open source and available under the MIT License.
 
 ---
 
-**Built with ❤️ for high-performance RAG systems**
+**Built for high-performance RAG systems**
