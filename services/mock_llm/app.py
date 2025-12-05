@@ -6,9 +6,10 @@ import os
 from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
 import time
-
+from app.health import router as health_router
 app = FastAPI(title="Mock LLM Service", version="1.0")
 
+app.include_router(health_router)
 class GenerateRequest(BaseModel):
     prompt: str = None
     query: str = None  # Accept both prompt and query
@@ -33,9 +34,7 @@ MOCK_RESPONSES = {
     "default": "That's an interesting question. Based on the context provided and my knowledge, I can offer the following insights: The topic you're asking about involves several key concepts related to modern software architecture and distributed systems. I'd recommend exploring the specific components and their interactions to gain a deeper understanding."
 }
 
-@app.get("/health")
-async def health_check():
-    return {"status": "ok", "service": "mock_llm"}
+# Health endpoints are now in health.py router
 
 @app.post("/generate", response_model=GenerateResponse)
 async def generate_response(request: GenerateRequest):

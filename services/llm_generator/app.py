@@ -5,7 +5,7 @@ import requests
 from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
 from dotenv import load_dotenv
-
+from app.health import router as health_router
 # --- Configuration ---
 load_dotenv()
 # LLM service details (from .env/docker-compose)
@@ -14,7 +14,7 @@ LLM_MOCK_FALLBACK = os.getenv("LLM_MOCK_FALLBACK", "false").lower() in ("1", "tr
 
 # --- FastAPI Setup ---
 app = FastAPI(title="LLM Generator Service", version="1.0")
-
+app.include_router(health_router)
 # --- Pydantic Data Models ---
 class GeneratorRequest(BaseModel):
     """Input model received from the Redis queue/API Gateway."""
@@ -27,22 +27,7 @@ class GeneratorResponse(BaseModel):
     answer: str
     latency_ms: float
 
-# --- Health Check ---
-@app.get("/health")
-def health_check():
-    """Checks service status and connectivity to the LLM service."""
-    try:
-        response = requests.post(
-            f"{LLM_SERVICE_URL}/generate",
-            json={"query": "Test"},
-            timeout=5
-        )
-        if response.status_code == 200:
-            return {"status": "ok", "llm_service": LLM_SERVICE_URL}
-        else:
-            return {"status": "degraded", "detail": f"LLM service returned status {response.status_code}"}
-    except requests.exceptions.RequestException:
-        raise HTTPException(status_code=503, detail="Cannot reach LLM service.")
+# Health endpoints are now in health.py router
 
 # --- Main Inference Endpoint ---
 @app.post("/generate", response_model=GeneratorResponse)

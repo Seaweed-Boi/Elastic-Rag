@@ -11,9 +11,12 @@ from redis import Redis
 from dotenv import load_dotenv
 from prometheus_client import Counter, Histogram, Gauge, generate_latest, CONTENT_TYPE_LATEST
 from fastapi.responses import Response
+from health import router as health_router
+
+
 
 # --- Configuration & Initialization ---
-load_dotenv()
+load_dotenv() 
 
 # Service URLs (Uses Docker service names from .env)
 ENCODER_URL = f"http://{os.getenv('ENCODER_HOST', 'encoder_service')}:{os.getenv('API_PORT', '8000')}"
@@ -52,6 +55,8 @@ _rr_counter = 0
 
 # --- FastAPI Setup & Models ---
 app = FastAPI(title="API Gateway (RL Heuristic)", version="1.0")
+
+app.include_router(health_router)
 
 # --- Prometheus Metrics ---
 query_counter = Counter('api_gateway_queries_total', 'Total queries processed', ['status'])

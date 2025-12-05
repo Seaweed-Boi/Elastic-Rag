@@ -39,3 +39,8 @@ EXPOSE $PORT
 # This maximizes throughput by using asynchronous workers.
 # The application module is 'app', and the FastAPI object is 'app'.
 CMD ["gunicorn", "--workers", "4", "--worker-class", "uvicorn.workers.UvicornWorker", "--bind", "0.0.0.0:8000", "app:app"]
+
+
+HEALTHCHECK --interval=15s --timeout=2s --start-period=10s --retries=3 \
+  CMD curl -fsS http://127.0.0.1:8000/live || exit 1
+

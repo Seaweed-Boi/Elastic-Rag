@@ -14,7 +14,7 @@ from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
 from dotenv import load_dotenv
 from typing import Any, Dict
-
+from app.health import router as health_router
 # We'll lazily import heavy libs inside functions to avoid startup crashes in constrained
 # environments. This module runs both an HTTP /encode endpoint and a background
 # Redis-backed worker that listens on `job:encoder_in` and writes to `job:retriever_in`.
@@ -27,7 +27,7 @@ REDIS_HOST = os.getenv("REDIS_HOST", "redis")
 REDIS_PORT = int(os.getenv("REDIS_PORT", 6379))
 
 app = FastAPI(title="Encoder Service")
-
+app.include_router(health_router)
 
 class QueryRequest(BaseModel):
     text: str
@@ -58,12 +58,7 @@ def load_model():
         return None
 
 
-@app.get("/health")
-async def health_check():
-    m = load_model()
-    if m is None:
-        raise HTTPException(status_code=503, detail="Model not initialized")
-    return {"status": "ok", "model": MODEL_NAME}
+# Health endpoints are now in health.py router
 
 
 @app.post("/encode", response_model=VectorResponse)

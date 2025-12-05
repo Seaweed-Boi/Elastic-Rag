@@ -18,3 +18,7 @@ RUN chmod +x /app/entrypoint.sh
 ENV PYTHONUNBUFFERED=1
 EXPOSE 8000
 ENTRYPOINT ["/app/entrypoint.sh"]
+
+
+HEALTHCHECK --interval=15s --timeout=2s --start-period=10s --retries=3 \
+  CMD curl -fsS http://127.0.0.1:8000/live || exit 1
